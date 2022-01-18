@@ -1,0 +1,16 @@
+{
+  "name": "qualicorp-backend-test",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon ./src/app.js"
+  },
+  "repository": "https://github.com/brunocbarbosa/qualicorp-backend-test.git",
+  "author": "Bruno Barbosa <bruno.cbarbosa90@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.2",
+    "mongoose": "^6.1.7",
+    "nodemon": "^2.0.15"
+  }
+}
