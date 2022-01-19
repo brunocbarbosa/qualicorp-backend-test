@@ -1,13 +1,12 @@
 const express = require('express')
-const mongoose = require('mongoose')
 const routes = require('./routes/routes')
-
+const mongoose = require('mongoose')
 
 const app = express()
 
 app.use(express.json())
 
-app.use('/user', routes)
+app.use(routes)
 
 const port = 3333
 
@@ -18,4 +17,3 @@ mongoose.connect(mongoConnect)
   app.listen(port, () => console.log(`Server running at port ${port}!!`))
 })
 .catch((err) => console.log(err))
-
