@@ -1,6 +1,32 @@
 const User = require('../models/userService')
+const jwt = require('jsonwebtoken')
 
 class userController{
+
+  async auth(req, res){
+    const { email, password } = req.body
+
+    try {
+      const user = await User.findOne({ email: email })
+      
+      if(!user) {
+        return res.status(400).json({error: "Missing data!!"})        
+      }
+
+      const token = jwt.sign({
+        name: user.name,
+        email: user.email
+      }, "9df571d4410759b96d0a3103301ee55d",{
+        subject: user.id,
+        expiresIn: '1d'
+      })
+
+      res.status(200).json(token)
+
+    } catch (error) {
+      res.status(500).json({error: error})
+    }
+  }
   
   async create(req, res){
     const {name, password, email} = req.body
@@ -45,28 +71,22 @@ class userController{
     }
   }
 
-  // async getOne(req, res) {
-  //   const id = req.params.id
+  async getOne(req, res) {
+    const id = req.params.id
   
-  //   try {
-  //     const user = await User.findOne({ _id: id })
+    try {
+      const user = await User.findOne({ _id: id })
 
-  //     if(!user){
-  //       res.status(400).json({error: "User do not exists!!"})
-  //       return
-  //     }
+      if(!user){
+        res.status(400).json({error: "User do not exists!!"})
+        return
+      }
   
-  //     res.status(200).json(user)
-  //   } catch (error) {
-  //     res.status(500).json({error: error})
-  //   }
-  // }
-
-  // async update(req, res){
-  //   const id = req.params.id
-
-  //   const {name, }
-  // }
+      res.status(200).json(user)
+    } catch (error) {
+      res.status(500).json({error: error})
+    }
+  }
 }
 
 module.exports = userController

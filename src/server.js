@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express')
 const routes = require('./routes/routes')
 const mongoose = require('mongoose')
@@ -10,7 +11,7 @@ app.use(routes)
 
 const port = 3333
 
-const mongoConnect = `mongodb+srv://qualicorp:5717485@apicluster.htfwe.mongodb.net/users?retryWrites=true&w=majority`
+const mongoConnect = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@apicluster.htfwe.mongodb.net/users?retryWrites=true&w=majority`
 mongoose.connect(mongoConnect)
 .then(() => {
   console.log('Database connected!!')
