@@ -1,5 +1,6 @@
 const User = require('../models/userService')
 const jwt = require('jsonwebtoken')
+const bcCrypt = require('bcryptjs')
 
 class userController{
 
@@ -10,8 +11,11 @@ class userController{
       const user = await User.findOne({ email: email })
       
       if(!user) {
-        return res.status(400).json({error: "Missing data!!"})        
+        return res.status(400).json({error: "Login/Password incorrect"})        
       }
+
+      const passMatch = await bcCrypt.compare(password, user.password)
+      if(!passMatch) return res.status(400).json({error: "Login/Password incorrect"})
 
       const token = jwt.sign({
         name: user.name,
@@ -31,21 +35,17 @@ class userController{
   async create(req, res){
     const {name, password, email} = req.body
 
-    if(!name || !password || !email) {
-      return res.status(400).json({error: "Missing data!!"})
-     
-    }
-
+    if(!name || !password || !email) return res.status(400).json({error: "Missing data!!"})
+  
     const existsUser = await User.findOne({ email: email })
 
-    if(existsUser){
-      return res.status(400).json({error: "Email exists"})
-     
-    }
+    if(existsUser) return res.status(400).json({error: "Email exists"})
 
+    const passwordHash = await bcCrypt.hash(password, 8)
+  
     const user = {
       name,
-      password,
+      password: passwordHash,
       email
     }
 

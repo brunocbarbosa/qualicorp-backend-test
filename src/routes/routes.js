@@ -6,7 +6,7 @@ const userController = new UserController
 
 router.post('/user/login', userController.auth)
 
-router.post('/user', ensureAuthenticated, userController.create)
+router.post('/user', userController.create)
 router.get('/user', ensureAuthenticated, userController.getAll)
 router.get('/user/:id', ensureAuthenticated, userController.getOne)
 
