@@ -5,10 +5,9 @@ function ensureAuthenticated(req, res, next){
   const authToken = req.headers.authorization
   if(!authToken) return res.status(401).json({ message: "Token not exists or expired!!" });
 
-
   const [, token] = authToken.split(" ")
   try {
-    const sub  = jwt.verify(token, '9df571d4410759b96d0a3103301ee55d')
+    const sub = jwt.verify(token, process.env.JWT_SECRET)
   
     req.user_id = sub
 

@@ -10,9 +10,8 @@ class userController{
     try {
       const user = await User.findOne({ email: email })
       
-      if(!user) {
-        return res.status(400).json({error: "Login/Password incorrect"})        
-      }
+      if(!user) return res.status(400).json({error: "Login/Password incorrect"})        
+      
 
       const passMatch = await bcCrypt.compare(password, user.password)
       if(!passMatch) return res.status(400).json({error: "Login/Password incorrect"})
@@ -20,7 +19,7 @@ class userController{
       const token = jwt.sign({
         name: user.name,
         email: user.email
-      }, "9df571d4410759b96d0a3103301ee55d",{
+      }, process.env.JWT_SECRET,{
         subject: user.id,
         expiresIn: '1d'
       })
@@ -77,11 +76,32 @@ class userController{
     try {
       const user = await User.findOne({ _id: id })
 
-      if(!user){
-        res.status(400).json({error: "User do not exists!!"})
-        return
-      }
+      if(!user) return res.status(400).json({error: "User do not exists!!"})
+    
+      res.status(200).json(user)
+    } catch (error) {
+      res.status(500).json({error: error})
+    }
+  }
+
+  async uypdate(req, res) {
+    const id = req.params.id
+
+    const {name, password, email} = req.body
+
+    const passwordHash = await bcCrypt.hash(password, 8)
+
+    const user = {
+      name,
+      password: passwordHash,
+      email
+    }
   
+    try {
+      const updatedUser = await User.updateOne({ _id: id }, user)
+
+      if(updatedUser.matchedCount === 0)return res.status(422).json({message: 'Usuário não encontrado'})
+      
       res.status(200).json(user)
     } catch (error) {
       res.status(500).json({error: error})
