@@ -100,9 +100,28 @@ class userController{
     try {
       const updatedUser = await User.updateOne({ _id: id }, user)
 
+      const existsUser = await User.findOne({ email: email })
+      if(existsUser) return res.status(400).json({error: "Email exists"})
+
       if(updatedUser.matchedCount === 0)return res.status(422).json({message: 'Usuário não encontrado'})
       
       res.status(200).json(user)
+    } catch (error) {
+      res.status(500).json({error: error})
+    }
+  }
+
+  async delete(req, res) {
+    const id = req.params.id
+
+    const user = await User.findOne({ _id: id })
+
+    if(!user) return res.status(400).json({error: "User do not exists!!"})
+  
+    try {
+     await User.deleteOne({ _id: id })
+    
+      res.status(200).json('Deleted')
     } catch (error) {
       res.status(500).json({error: error})
     }
