@@ -21,7 +21,7 @@ class userController{
         email: user.email
       }, process.env.JWT_SECRET,{
         subject: user.id,
-        expiresIn: '1d'
+        expiresIn: '1h'
       })
 
       res.status(200).json(token)
@@ -84,19 +84,21 @@ class userController{
     }
   }
 
-  async uypdate(req, res) {
+  async update(req, res) {
     const id = req.params.id
-
+    let passwordHash = undefined
     const {name, password, email} = req.body
 
-    const passwordHash = await bcCrypt.hash(password, 8)
+    if(password){
+      passwordHash  = await bcCrypt.hash(password, 8)
+    }
 
     const user = {
       name,
       password: passwordHash,
       email
     }
-  
+
     try {
       const updatedUser = await User.updateOne({ _id: id }, user)
 
@@ -121,7 +123,7 @@ class userController{
     try {
      await User.deleteOne({ _id: id })
     
-      res.status(200).json('Deleted')
+      res.status(200).json({message: 'User Deleted'})
     } catch (error) {
       res.status(500).json({error: error})
     }
